@@ -2,10 +2,14 @@
 ### Deploy ICP to cluster
 ##################################
 module "icpprovision" {
-    source = "git::https://github.com/IBM-CAMHub-Open/template_icp_modules.git?ref=2.3//public_cloud"
+    source = "git::https://github.com/IBM-CAMHub-Development/template_icp_modules.git?ref=2.3//public_cloud"
     # Provide IP addresses for boot, master, mgmt, va, proxy and workers
     boot-node = "${ibm_compute_vm_instance.icp-master.ipv4_address_private}"
     bastion_host  = "${ibm_compute_vm_instance.icp-master.ipv4_address}"
+
+    #in support of workers scaling
+ 	icp-worker = ["${ibm_compute_vm_instance.icp-worker.*.ipv4_address_private}"]
+
     icp-host-groups = {
         master = ["${ibm_compute_vm_instance.icp-master.*.ipv4_address_private}"]
         proxy = ["${ibm_compute_vm_instance.icp-proxy.*.ipv4_address_private}"]
