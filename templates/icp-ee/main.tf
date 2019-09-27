@@ -86,8 +86,8 @@ resource "random_id" "adminpassword" {
 
 module "gather_output" {
     source 						          = "git::https://github.com/IBM-CAMHub-Development/template_icp_modules.git?ref=2.3//public_cloud_output"
-	  #cluster_CA_domain           = "${ibm_lbaas.master-lbaas.vip}"
-    cluster_CA_domain           = "${local.registry_server}"
+	  cluster_CA_domain           = "${ibm_lbaas.master-lbaas.vip}"
+    #cluster_CA_domain           = "${local.registry_server}"
 	  icp_master 				          = "${ibm_compute_vm_instance.icp-master.*.ipv4_address}"
 	  ssh_user 					          = "icpdeploy"
 	  ssh_key_base64 		          = "${base64encode(tls_private_key.installkey.private_key_pem)}"
