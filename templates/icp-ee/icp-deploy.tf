@@ -76,7 +76,7 @@ module "icpprovision" {
     ssh_user        = "icpdeploy"
     ssh_key_base64  = "${base64encode(tls_private_key.installkey.private_key_pem)}"
     ssh_agent       = false
-    dependsOn       = "[${module.loadimage.dependsOn}]"
+    dependsOn       = "${module.loadimage.dependsOn}"
     #image_location  = "${var.image_location}"
     # Make sure to wait for image load to complete
     #hooks = {
