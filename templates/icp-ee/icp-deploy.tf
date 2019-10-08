@@ -4,7 +4,7 @@
 ##################################
 
 module "loadimage" {
-    source = "git::https://github.com/IBM-CAMHub-Development/template_icp_modules.git?ref=2.3//public_cloud_image_load"
+    source = "git::https://github.com/IBM-CAMHub-Development/template_icp_modules.git?ref=3.2.1//public_cloud_image_load"
     image_location = "${var.image_location}"
     boot_ipv4_address_private = "${ibm_compute_vm_instance.icp-boot.ipv4_address_private}"
     boot_ipv4_address = "${ibm_compute_vm_instance.icp-boot.ipv4_address}"
@@ -19,7 +19,7 @@ module "loadimage" {
 ### Deploy ICP to cluster
 ##################################
 module "icpprovision" {
-    source = "git::https://github.com/IBM-CAMHub-Development/template_icp_modules.git?ref=2.3//public_cloud"
+    source = "git::https://github.com/IBM-CAMHub-Development/template_icp_modules.git?ref=3.2.1//public_cloud"
     # Provide IP addresses for boot, master, mgmt, va, proxy and workers
     boot-node = "${ibm_compute_vm_instance.icp-boot.ipv4_address_private}"
     bastion_host  = "${var.private_network_only ? ibm_compute_vm_instance.icp-boot.ipv4_address_private : ibm_compute_vm_instance.icp-boot.ipv4_address}"
