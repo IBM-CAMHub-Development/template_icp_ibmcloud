@@ -94,5 +94,5 @@ module "gather_output" {
     bastion_host 			          = "${element(ibm_compute_vm_instance.icp-boot.*.ipv4_address, 0)}"
 	  bastion_user    	          = "icpdeploy"
 	  bastion_private_key_base64 	= "${base64encode(tls_private_key.installkey.private_key_pem)}"
-    dependsOn                   = "${module.icpprovision.install_complete}"
+    dependsOn                   = "${module.icp_provision.install_complete}"
 }
