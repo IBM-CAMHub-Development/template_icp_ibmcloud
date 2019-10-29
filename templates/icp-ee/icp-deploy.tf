@@ -2,9 +2,27 @@
 ##################################
 ### Load the ICP image
 ##################################
+resource "null_resource" "image_copy" {
+  # Only copy image from local location if not available remotely
+  count = "${var.image_location != "" && ! (substr(var.image_location, 0, 3) != "nfs"  || substr(var.image_location, 0, 4) != "http") ? 1 : 0}"
 
-module "loadimage" {
+  provisioner "file" {
+    connection {
+      host          = "${var.boot_ipv4_address_private}"
+      user          = "icpdeploy"
+      private_key   = "${var.boot_private_key_pem}"
+      bastion_host  = "${var.private_network_only ? var.boot_ipv4_address_private : var.boot_ipv4_address}"
+    }
+
+    source = "${var.image_location}"
+    destination = "/tmp/${basename(var.image_location)}"
+  }
+}
+
+module "image_load" {
     source = "git::https://github.com/IBM-CAMHub-Development/template_icp_modules.git?ref=3.2.1//public_cloud_image_load"
+    # define dependency on image_copy
+    image_copy_finished = "${null_resource.image_copy.id}"
     image_location = "${var.image_location}"
     boot_ipv4_address_private = "${ibm_compute_vm_instance.icp-boot.ipv4_address_private}"
     boot_ipv4_address = "${ibm_compute_vm_instance.icp-boot.ipv4_address}"
@@ -18,7 +36,7 @@ module "loadimage" {
 ##################################
 ### Deploy ICP to cluster
 ##################################
-module "icpprovision" {
+module "icp_provision" {
     source = "git::https://github.com/IBM-CAMHub-Development/template_icp_modules.git?ref=3.2.1//public_cloud"
     # Provide IP addresses for boot, master, mgmt, va, proxy and workers
     boot-node = "${ibm_compute_vm_instance.icp-boot.ipv4_address_private}"
@@ -76,7 +94,7 @@ module "icpprovision" {
     ssh_user        = "icpdeploy"
     ssh_key_base64  = "${base64encode(tls_private_key.installkey.private_key_pem)}"
     ssh_agent       = false
-    dependsOn       = "${module.loadimage.dependsOn}"
+    image_load_finished       = "${module.image_load.image_load_finished}"
     #image_location  = "${var.image_location}"
     # Make sure to wait for image load to complete
     #hooks = {
