@@ -42,4 +42,5 @@ module "gather_output" {
     bastion_host 			          = ""
 	  bastion_user    	          = ""
 	  bastion_private_key_base64 	= ""
+    dependsOn                   = "${module.icp_provision.install_complete}"
 }
