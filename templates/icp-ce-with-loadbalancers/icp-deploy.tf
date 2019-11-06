@@ -48,7 +48,7 @@ module "icp_provision" {
     # for boot master to communicate with worker and proxy nodes
     # during ICP deployment
     generate_key = true
-
+    image_load_finished = true
     # SSH user and key for terraform to connect to newly created VMs
     # ssh_key is the private key corresponding to the public assumed to be included in the template
     ssh_user        = "icpdeploy"
